@@ -1,0 +1,25 @@
+{
+  "name": "lab-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^22.18.0 || >=24.12.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 4173 --strictPort",
+    "format": "prettier --write src vite.config.js index.html package.json",
+    "format:check": "prettier --check src vite.config.js index.html package.json"
+  },
+  "dependencies": {
+    "vue": "3.5.42",
+    "vue-router": "5.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "6.0.8",
+    "prettier": "3.10.1",
+    "vite": "8.3.8"
+  }
+}
