@@ -6,6 +6,8 @@
 
 沿用教学项目 Vue → HTTP/JSON → Django 视图 → Form 校验 → Model／ORM → MySQL 的路径，保留 Django Admin。当前不引入 DRF、Pinia、Redis、Celery 或 Dify 运行环境；等明确需要时再添加。
 
+Django Admin 已接入 SimpleUI 主题，配置见 [后台说明](09-admin-simpleui.md)。业务模型和权限仍由各 app 的 `admin.py` 与 Django 管理。
+
 ```mermaid
 flowchart LR
     Browser[浏览器 / Vue 页面] -->|/api 请求| Vite[Vite 开发代理]

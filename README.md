@@ -6,7 +6,7 @@
 
 - Vue 工作台、侧边导航、登录和个人信息页。
 - 器材／材料列表、分类筛选、搜索、分页、新增与 MySQL 持久化。
-- Django Session 登录、CSRF 保护、管理员写入权限、Admin 管理入口。
+- Django Session 登录、CSRF 保护、管理员写入权限、SimpleUI 管理后台。
 - 采购、收货、智能问答的规划入口，**尚未实现这些业务**。
 - 独立环境、锁定依赖、数据库迁移、PR 模板、Issue 模板、GitHub Actions。
 
@@ -26,6 +26,7 @@
 | [成员分工与后续任务](docs/06-team-backlog.md) | 可拆成 Issue 的任务与验收条件 |
 | [验证记录](docs/07-verification.md) | 当前版本的实际检查结果与局限 |
 | [本机环境补充](docs/08-local-environment.md) | Docker 故障记录与独立 MySQL 备用方式 |
+| [SimpleUI 管理后台](docs/09-admin-simpleui.md) | 后台主题、模型菜单和团队安装说明 |
 
 ## 最快启动（Windows PowerShell）
 

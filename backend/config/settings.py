@@ -19,6 +19,7 @@ DEBUG = os.environ.get("DJANGO_DEBUG", "false").lower() == "true"
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 INSTALLED_APPS = [
+    "config.simpleui_config.LabSimpleUIConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -88,3 +89,20 @@ SESSION_COOKIE_SAMESITE = "Lax"
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024
+
+# Django Admin appearance. Keep Django's generated, permission-aware menus.
+X_FRAME_OPTIONS = "SAMEORIGIN"
+SIMPLEUI_DEFAULT_THEME = "ant.design.css"
+SIMPLEUI_LOGO = f"{STATIC_URL}lab/brand.svg"
+SIMPLEUI_HOME_TITLE = "管理首页"
+SIMPLEUI_HOME_INFO = False
+SIMPLEUI_HOME_QUICK = True
+SIMPLEUI_HOME_ACTION = True
+SIMPLEUI_ANALYSIS = False
+SIMPLEUI_LOGIN_PARTICLES = False
+SIMPLEUI_ICON = {
+    "器材与材料": "fas fa-flask",
+    "物品": "fas fa-boxes",
+    "用户": "fas fa-users",
+    "组": "fas fa-user-shield",
+}
