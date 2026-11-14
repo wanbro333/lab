@@ -1,5 +1,7 @@
 # 架构与代码阅读路线
 
+更新日期：2026-11-14。业务目标与 ER 关系见 [总体指引](00-project-guide.md)，实际完成范围见 [开发进度](11-development-status.md)。
+
 ## 1. 为什么这样搭
 
 本次选择单仓库：`frontend/` 放 Vue，`backend/` 放 Django，`docs/` 放讨论与协作依据。小组能在同一个 PR 中同时检查接口和页面变化。拆成前后端两个仓库需要额外协调版本；微服务／完整容器化应用会增加启动和排错成本，暂不采用。
@@ -16,7 +18,9 @@ flowchart LR
     Django --> Form[Form 校验]
     Form --> ORM[Django ORM]
     ORM --> MySQL[(MySQL 8.4)]
-    Admin[Django Admin] --> ORM
+    Admin[Django Admin] --> Service[采购批准 / 确认入库服务]
+    Service --> ORM
+    Admin --> Form
 ```
 
 开发代理只解决本地联调。`npm run build` 生成的文件不会自行携带代理；将来部署需要静态站点与 `/api` 反向代理。这次没有部署到公网。
@@ -37,7 +41,8 @@ lab/
 │  ├─ config/              settings、全局 urls、WSGI/ASGI
 │  ├─ apps/core/           健康检查、JSON 辅助、示例初始化
 │  ├─ apps/accounts/       自定义 User、登录接口、Admin
-│  ├─ apps/inventory/      模型、校验、接口、测试、迁移
+│  ├─ apps/inventory/      物品、库位、批次、流水、台账接口
+│  ├─ apps/procurement/    供应商、采购、收货、事务服务与后台
 │  └─ manage.py
 ├─ scripts/               Windows 安装、启动与检查
 ├─ docs/                  需求、接口、Git 教程和验证
@@ -65,16 +70,21 @@ Vue 的权限按钮只帮助操作；真正的权限由 Django 每次请求检�
 
 - `accounts.User` 继承 Django `AbstractUser`，只补充 `display_name`，从初始迁移就设置 `AUTH_USER_MODEL`，方便将来扩展。
 - `inventory.Item` 保存基础台账字段，数量为 Decimal；数据库同时约束唯一编号和非负数量。
+- `inventory.StorageLocation` 保存库位；`StockBatch` 保存收货产生的批次及当前余额；`StockMovement` 保存采购入库流水。
+- `procurement` 包含供应商、采购单/明细、收货单/明细。批准与确认入库统一调用 `services.py`，表单校验放 `forms.py`，后台动作和修改权限放 `admin.py`。
 - 匿名用户看首页／规划页；登录成员可查物品；`is_staff` 用户可以新增；开发管理员可进 Admin。
-- `is_staff` 是本轮技术上的基础权限，**不是最终教师／项目负责人业务角色**。科研项目、实验室隔离和审批权限尚未实现。
+- 批准和确认入库分别检查 `approve_purchaseorder`、`post_receipt` 自定义权限，同时要求对应模型修改权限；入库后的批次和流水在后台只读。
+- `is_staff` 是后台访问资格，**不是最终教师／项目负责人业务角色**。角色矩阵、科研项目和多实验室隔离尚未实现；当前已有单级批准权限。
 
-现有 Item 适合学习和基础登记。后续应按业务增加批次、独立设备、库存流水、采购单／明细、收货单／明细，而不是不断在 Item 中堆数量状态。
+当前 Item 的数量、文本位置和有效期仍供基础台账页面使用。新库存已经按批次保存，但汇总查询与旧台账期初迁移尚未实现；下一步应统一数据来源，再扩展借还和设备逐台管理。
 
 ## 5. 后续模块接入方法
 
-例如开发采购：先在 Issue 定义字段、接口与验收，然后新增 `backend/apps/procurement/`，注册 App 与 URL，创建并提交迁移；前端新增 `views/procurement/` 与 `api/procurement.js`，将占位路由换成实际页面。公共 App.vue、路由和 settings 的修改尽量集中协调。
+采购 app 已注册，模型、服务和后台可用，但 `views.py` 仍是模板，尚无采购/收货 API 路由。接前端时，先在 Issue 定义接口和权限，再增加视图与 URL；前端新增模块页面和 API 文件，将占位路由换成实际页面。公共 App.vue、路由和 settings 的修改尽量集中协调。
 
-正式出入库需在事务中写业务记录和库存流水，处理并发、重复确认、撤销和审计。Dify 密钥只放后端环境变量；不要把模型直接接到数据库执行权限上。
+现有确认入库在同一事务中校验单据、创建批次和流水、更新状态，并通过采购单父行锁和来源唯一约束处理并发及重复确认。后台修改单据也遵循同一加锁约定。未来 API 应复用服务；出库、归还、撤销和冲销仍需实现。细节见 [入库教程](10-stock-receipt.md)。
+
+Dify 密钥只放后端环境变量；不要把模型直接接到数据库执行权限上。
 
 ## 6. 验证与环境
 

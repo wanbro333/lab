@@ -16,16 +16,17 @@
 
 SimpleUI 通过覆盖 Django admin 的模板生效，所以必须注册在 `django.contrib.admin` 前面。此版本会移除 `XFrameOptionsMiddleware`；项目使用自定义 AppConfig 将其恢复，并设置 `X_FRAME_OPTIONS = "SAMEORIGIN"`，让后台自己的标签页可以加载，同源以外的页面不能嵌入。
 
-菜单使用 Django 已注册模型和当前用户权限自动生成。以后在采购 app 的 `admin.py` 注册模型后，具备对应权限的用户就能看到入口，无需另维护一套固定菜单。
+菜单使用 Django 已注册模型和当前用户权限自动生成。截至 2026-11-14，物品、库位、供应商、采购单、收货单、库存批次和库存流水均已注册；具备对应权限的用户可见。采购/收货明细在单据中内联维护，无需另维护一套固定菜单。操作说明见 [采购批准与确认入库](10-stock-receipt.md)。
 
 ## 成员拉取代码后
 
 ```powershell
 cd D:\lab
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe backend\manage.py migrate
 ```
 
-重启 Django，然后刷新后台。本次未修改模型，无新增数据库迁移。浏览器已有旧主题缓存时可强制刷新；若曾手动选过皮肤，可在后台皮肤菜单切回默认主题。
+重启 Django，然后刷新后台。2026-11-13 的纯主题调整没有新增迁移；当前项目已包含采购/收货/库存的新迁移，因此拉取代码后需要执行上面的 `migrate`。浏览器已有旧主题缓存时可强制刷新；若曾手动选过皮肤，可在后台皮肤菜单切回默认主题。
 
 开发环境静态资源由 Django 提供；将来生产部署时需要执行 `collectstatic` 并配置静态文件服务。后台使用本地包内资源。
 
