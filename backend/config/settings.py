@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "apps.accounts.apps.AccountsConfig",
     "apps.inventory.apps.InventoryConfig",
     "apps.core.apps.CoreConfig",
+    "apps.procurement.apps.ProcurementConfig",
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
